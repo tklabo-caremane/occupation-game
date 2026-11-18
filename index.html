@@ -65,6 +65,9 @@ body { background-color:#fdf6e3; background-image:radial-gradient(#f3d9a4 3px, t
 .pop .bignum { display:inline-block; margin-top:5px; font-size:20px; font-weight:900; color:#0b7a68; background:#fff; border:2px solid #ffd166; border-radius:999px; padding:3px 16px;}
 .descLead { font-size:16.5px; font-weight:bold;}
 .status { display:inline-block; border-radius:999px; background:#fff; box-shadow:0 2px 0 rgba(180,160,110,.4); padding:6px 15px; margin-top:12px;}
+#pGoal { position:sticky; top:8px; z-index:6; text-align:right; margin:2px 0 2px;}
+#pGoal .goalpill { display:inline-block; background:#0b7a68; color:#fff; font-weight:900; font-size:16.5px; border-radius:999px; padding:7px 16px; box-shadow:0 3px 8px rgba(11,122,104,.35);}
+#pGoal .goalhint { display:block; font-size:11.5px; color:#0b7a68; font-weight:bold; margin-top:3px; padding-right:6px;}
 .desc { padding:0 8px;}
 </style>
 </head>
@@ -86,6 +89,7 @@ body { background-color:#fdf6e3; background-image:radial-gradient(#f3d9a4 3px, t
 </div>
 
 <div id="scr-play" class="hidden">
+<div id="pGoal"></div>
 <div class="jobname" id="pName"></div>
 <div class="stage">
 <img class="jobimg" id="pImg" alt="">
@@ -224,7 +228,8 @@ $('pLink').innerHTML = JOBS[pv].name + 'からのつながり：<b>' + reason(pv
 else { $('pLink').style.display = 'none';}
 var st;
 if (S.cur === S.target && S.hops> 0) st = '<b>ゴール到着！</b> ／ かかった手数：<b>' + S.hops + '手</b>';
-else st = '現在地：<b>' + j.name + '</b> ／ <b>' + S.hops + '手</b> ／ 目的地：<b>' + JOBS[S.target].name + '</b>（' + hint() + '）';
+else st = '<b>' + S.hops + '手</b>';
+$('pGoal').innerHTML = '<span class="goalpill">目的地：' + JOBS[S.target].name + '</span><span class="goalhint">' + hint() + '</span>';
 $('pStatus').innerHTML = st;
 var box = $('pBtns'); box.innerHTML='';
 var box2 = $('pBtns2'); box2.innerHTML='';
