@@ -163,7 +163,8 @@ var EDGES = [
 ['sensei','ryouri'],['sensei','keisatsu'],['sensei','cameraman'],['sensei','haisha'],['sensei','bus'],['sensei','shisho'],
 ['shiyakusho','kenchiku'],['shiyakusho','shisho'],['shiyakusho','yuubin'],['shiyakusho','juuishi'],
 ['keisatsu','shoubou'],
-['truck','seibishi'],['seibishi','taxi'],['denki','fudousan'],['biyoushi','cameraman'],['bus','seibishi']
+['truck','seibishi'],['seibishi','taxi'],['denki','fudousan'],['biyoushi','cameraman'],['bus','seibishi'],
+['shoubou','shiyakusho'],['hoiku','kangoshi']
 ];
 var ADJ = {}; Object.keys(JOBS).forEach(function(k){ ADJ[k]=[];});
 EDGES.forEach(function(e){ ADJ[e[0]].push(e[1]); ADJ[e[1]].push(e[0]);});
@@ -187,7 +188,7 @@ var REASON = {
 'keisatsu|sensei':'交通安全教室', 'cameraman|sensei':'卒業アルバム', 'haisha|sensei':'学校の歯科医', 'bus|sensei':'遠足のバス', 'sensei|shisho':'調べ学習', 'ryouri|sensei':'学校給食',
 'kenchiku|shiyakusho':'建築確認の申請', 'shisho|shiyakusho':'図書館の運営', 'shiyakusho|yuubin':'公文書の郵送', 'juuishi|shiyakusho':'狂犬病の予防接種',
 'keisatsu|shoubou':'事故や災害の連携',
-'seibishi|truck':'車の整備', 'seibishi|taxi':'タクシーの整備', 'denki|fudousan':'リフォームの電気', 'biyoushi|cameraman':'記念写真のヘアメイク', 'bus|seibishi':'バスの整備'
+'seibishi|truck':'車の整備', 'seibishi|taxi':'タクシーの整備', 'denki|fudousan':'リフォームの電気', 'biyoushi|cameraman':'記念写真のヘアメイク', 'bus|seibishi':'バスの整備', 'shiyakusho|shoubou':'消防本部は市の組織', 'hoiku|kangoshi':'園の看護師'
 };
 function reason(a,b){ return REASON[a+'|'+b] || REASON[b+'|'+a] || '';}
 var S = { start:'ryoushi', target:'caremane', cur:null, hops:0, path:[], rares:[], round:1, total:0, scored:false};
