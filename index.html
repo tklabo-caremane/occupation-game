@@ -60,7 +60,9 @@ body { background-color:#fdf6e3; background-image:radial-gradient(#f3d9a4 3px, t
 @keyframes phraseIn { from { opacity:0; transform:translateY(12px) scale(.85) rotate(-2deg);} to { opacity:1; transform:none;}}
 .plink { text-align:center; margin:10px 0 0; font-size:14px;}
 .plink b { color:#0b7a68;}
-.pop { text-align:center; color:#7a7565; font-size:12.5px; margin:7px 0 0;}
+.pop { text-align:center; color:#7a7565; font-size:13px; margin:7px 0 0;}
+.pop .bignum { display:inline-block; margin-top:5px; font-size:20px; font-weight:900; color:#0b7a68; background:#fff; border:2px solid #ffd166; border-radius:999px; padding:3px 16px;}
+.descLead { font-size:16.5px; font-weight:bold;}
 .status { display:inline-block; border-radius:999px; background:#fff; box-shadow:0 2px 0 rgba(180,160,110,.4); padding:6px 15px; margin-top:12px;}
 .desc { padding:0 8px;}
 </style>
@@ -164,7 +166,8 @@ var EDGES = [
 ['shiyakusho','kenchiku'],['shiyakusho','shisho'],['shiyakusho','yuubin'],['shiyakusho','juuishi'],
 ['keisatsu','shoubou'],
 ['truck','seibishi'],['seibishi','taxi'],['denki','fudousan'],['biyoushi','cameraman'],['bus','seibishi'],
-['shoubou','shiyakusho'],['hoiku','kangoshi']
+['shoubou','shiyakusho'],['hoiku','kangoshi'],
+['keisatsu','seibishi'],['shoubou','seibishi'],['yuubin','seibishi'],['kenchiku','fudousan'],['cameraman','fudousan'],['shisho','hoiku']
 ];
 var ADJ = {}; Object.keys(JOBS).forEach(function(k){ ADJ[k]=[];});
 EDGES.forEach(function(e){ ADJ[e[0]].push(e[1]); ADJ[e[1]].push(e[0]);});
@@ -188,7 +191,7 @@ var REASON = {
 'keisatsu|sensei':'交通安全教室', 'cameraman|sensei':'卒業アルバム', 'haisha|sensei':'学校の歯科医', 'bus|sensei':'遠足のバス', 'sensei|shisho':'調べ学習', 'ryouri|sensei':'学校給食',
 'kenchiku|shiyakusho':'建築確認の申請', 'shisho|shiyakusho':'図書館の運営', 'shiyakusho|yuubin':'公文書の郵送', 'juuishi|shiyakusho':'狂犬病の予防接種',
 'keisatsu|shoubou':'事故や災害の連携',
-'seibishi|truck':'車の整備', 'seibishi|taxi':'タクシーの整備', 'denki|fudousan':'リフォームの電気', 'biyoushi|cameraman':'記念写真のヘアメイク', 'bus|seibishi':'バスの整備', 'shiyakusho|shoubou':'消防本部は市の組織', 'hoiku|kangoshi':'園の看護師'
+'seibishi|truck':'車の整備', 'seibishi|taxi':'タクシーの整備', 'denki|fudousan':'リフォームの電気', 'biyoushi|cameraman':'記念写真のヘアメイク', 'bus|seibishi':'バスの整備', 'shiyakusho|shoubou':'消防本部は市の組織', 'hoiku|kangoshi':'園の看護師', 'keisatsu|seibishi':'パトカーの整備', 'seibishi|shoubou':'消防車の整備', 'seibishi|yuubin':'配達車の整備', 'fudousan|kenchiku':'中古住宅の調査', 'cameraman|fudousan':'物件写真の撮影', 'hoiku|shisho':'読み聞かせのおはなし会'
 };
 function reason(a,b){ return REASON[a+'|'+b] || REASON[b+'|'+a] || '';}
 var S = { start:'ryoushi', target:'caremane', cur:null, hops:0, path:[], rares:[], round:1, total:0, scored:false};
@@ -208,9 +211,11 @@ $('scr-start').classList.add('hidden'); $('scr-result').classList.add('hidden');
 var j = JOBS[S.cur];
 $('pName').innerHTML = '<span>' + j.name + '</span>';
 $('pImg').src = IMG[S.cur];
-$('pDesc').textContent = j.desc;
+var dp = j.desc.split('。'); var dfirst = dp.shift();
+$('pDesc').innerHTML = '<span class="descLead">' + dfirst + '。</span>' + dp.join('。');
 $('pMotto').innerHTML = j.motto.map(function(p, i){ return '<span class="mph" style="animation-delay:' + (0.2 + i * 0.75) + 's">' + p + '</span>';}).join('');
-$('pPop').textContent = j.pop;
+var pp = j.pop.split('―');
+$('pPop').innerHTML = pp[0].trim() + '<br><span class="bignum">' + (pp[1] ? pp[1].trim() : '') + '</span>';
 if (S.path.length>= 2){ var pv = S.path[S.path.length - 2];
 $('pLink').style.display = 'block';
 $('pLink').innerHTML = JOBS[pv].name + 'からのつながり：<b>' + reason(pv, S.cur) + '</b>';}
