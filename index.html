@@ -280,6 +280,7 @@ $('btnRetry').textContent = '次のゲームへ（第' + (S.round + 1) + 'ゲー
 $('rScore').innerHTML = html;
 var txt = '【6駅先の職業】' + JOBS[S.start].name + 'から' + JOBS[S.target].name + 'まで' + S.hops + '手で到着！ スコア' + total + '点（最短' + sh + '手）';
 if(S.round>= 5) txt = '【6駅先の職業】5ゲーム合計' + S.total + '点でした！';
+txt += '\nhttps://tklabo-caremane.github.io/occupation-game/\n#ブラウザゲーム #ミニゲーム';
 $('rShare').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt);
 window.scrollTo(0,0);
 }
