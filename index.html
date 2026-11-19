@@ -254,7 +254,7 @@ window.scrollTo(0,0);
 function move(nx){
 S.hops++; S.path.push(nx); S.cur = nx;
 if (nx === S.target){ showPlay(); return;}
-if (S.hops % 3 === 0){ $('vig').style.display='flex'; pendingShow = true; return;}
+
 showPlay();
 }
 var pendingShow = false;
