@@ -267,7 +267,7 @@ if (S.cur === S.target && S.hops> 0){
 var gb = document.createElement('button'); gb.className='gobtn goalbtn'; gb.textContent='ゴール！ 結果を見る';
 gb.addEventListener('click', showResult); box.appendChild(gb);
 } else {
-var letters = ['A','B','C','D','E','F','G','H','I','J'];
+var letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 var prev = S.path.length>= 2 ? S.path[S.path.length - 2] : null;
 var list = ADJ[S.cur].filter(function(nx){ return nx!== prev;});
 var pos = list.length=== 1 ? ['bp-b'] : list.length=== 2 ? ['bp-l','bp-r'] : ['bp-l','bp-r','bp-b'];
