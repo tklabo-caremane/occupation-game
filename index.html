@@ -94,8 +94,11 @@ body { background-color:#fdf6e3; background-image:none;}
 <div id="pairView" style="font-size:17px; text-align:center; line-height:1.9; padding:6px 0;"></div>
 <button class="gobtn" id="btnStart">この組み合わせでスタート</button>
 <button class="gobtn sub2" id="btnShuffle">組み合わせを変える</button>
-<p id="stBest" style="font-size:12.5px; color:#e07b39; font-weight:bold; margin:4px 0 0;"></p>
-<p id="stWeek" style="font-size:12.5px; color:#7a7565; margin:2px 0 0;"></p>
+<div style="background:#fff; border:2px solid #ffd166; border-radius:14px; padding:10px 14px; margin:10px auto 6px; max-width:350px; text-align:left; font-size:13.5px;">
+<div style="display:flex; justify-content:space-between; padding:3px 0;"><span>今週の最高点（みんなの記録）</span><b id="stWeek">―</b></div>
+<div style="display:flex; justify-content:space-between; padding:3px 0;"><span>あなたの自己ベスト</span><b id="stBest" style="color:#e07b39;">―</b></div>
+<div style="display:flex; justify-content:space-between; padding:3px 0;"><span>図鑑コレクション</span><b id="stCol">―</b></div>
+</div>
 <p style="font-size:12.5px; color:#7a7565; line-height:1.6;">隣の職業へ渡って、目的地を目指します。なぜつながっているかは、移った先のページで分かります。手数が少ないほど高得点です。全5ゲームの合計点で勝負です。職業の人数は公的統計などの概数です。</p>
 </div>
 </div>
@@ -387,7 +390,7 @@ if(newBest){ try { localStorage.setItem('rokuBest', String(S.total));} catch(e){
 var extra = '';
 if(newBest) extra += '<br><b style="color:#e07b39;">自己ベスト更新！</b>';
 if(justComp){ extra += '<br><b style="color:#e07b39;">図鑑コンプリート！ 全' + Object.keys(JOBS).length + '職を制覇</b>';}
-html += '<br><br><b>5ゲーム合計：<span id="finNum">0点</span></b><br>ランク：<b>' + rank + '</b>' + extra + '<div id="weekBest" style="margin-top:6px;"></div>';
+html += '<br><br><b>5ゲーム合計：<span id="finNum">0点</span></b><br>ランク：<b>' + rank + '</b>' + extra + '<div id="weekBest" style="margin-top:8px; font-size:15px; font-weight:bold;"></div>';
 if(newBest || justComp) setTimeout(confetti, 500);
 $('btnRetry').textContent = '最初からあそぶ';
 } else {
@@ -423,8 +426,10 @@ window.scrollTo(0,0);
 $('btnHowtoOk').addEventListener('click', function(){ $('scr-howto').classList.add('hidden'); showPlay();});
 $('btnShuffle').addEventListener('click', pickPair);
 (function(){ var b = 0; try { b = parseInt(localStorage.getItem('rokuBest') || '0', 10) || 0;} catch(e){}
-if(b > 0) $('stBest').textContent = 'あなたの自己ベスト：' + b + '点（ランク：' + rankName(b) + '）';
-fetch(WURL + '/best').then(function(r){ return r.json();}).then(function(w){ if(w && w.best > 0) $('stWeek').textContent = '今週の最高点（みんなの記録）：' + w.best + '点（ランク：' + rankName(w.best) + '）';}).catch(function(){});})();
+if(b > 0) $('stBest').textContent = b + '点（' + rankName(b) + '）';
+var cc = colLoad(); var cv = cc.v || {}; var cn = Object.keys(cv).length; var ct = Object.keys(JOBS).length;
+$('stCol').textContent = cc.done ? 'コンプリート！（' + cc.done + '）' : cn + ' / ' + ct + ' 職';
+fetch(WURL + '/best').then(function(r){ return r.json();}).then(function(w){ if(w && w.best > 0) $('stWeek').textContent = w.best + '点（' + rankName(w.best) + '）';}).catch(function(){});})();
 $('btnRetry').addEventListener('click', function(){
 if(S.round>= 5){ S.round = 1; S.total = 0; S.setPlan = null; S.posted = false;} else { S.round++;}
 $('scr-result').classList.add('hidden'); $('scr-play').classList.add('hidden'); $('scr-start').classList.remove('hidden');
