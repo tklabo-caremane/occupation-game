@@ -94,6 +94,7 @@ body { background-color:#fdf6e3; background-image:none;}
 <div id="pairView" style="font-size:17px; text-align:center; line-height:1.9; padding:6px 0;"></div>
 <button class="gobtn" id="btnStart">この組み合わせでスタート</button>
 <button class="gobtn sub2" id="btnShuffle">組み合わせを変える</button>
+<p id="stBest" style="font-size:12.5px; color:#e07b39; font-weight:bold; margin:4px 0 0;"></p>
 <p style="font-size:12.5px; color:#7a7565; line-height:1.6;">隣の職業へ渡って、目的地を目指します。なぜつながっているかは、移った先のページで分かります。手数が少ないほど高得点です。全5ゲームの合計点で勝負です。職業の人数は公的統計などの概数です。</p>
 </div>
 </div>
@@ -282,6 +283,7 @@ if(d<=1) return '目的地は目と鼻の先です'; if(d<=3) return '目的地�
 function showPlay(){
 $('scr-start').classList.add('hidden'); $('scr-result').classList.add('hidden'); $('scr-play').classList.remove('hidden');
 var j = JOBS[S.cur];
+if(markVisited(S.cur)) window.__justComp = true;
 $('pName').innerHTML = '<span>' + j.name + '</span>';
 $('pImg').src = IMG[S.cur];
 var dp = j.desc.split('。'); var dfirst = dp.shift();
@@ -342,6 +344,20 @@ $('vigClose').addEventListener('click', function(){ $('vig').style.display='none
 function countUp(el, to, dur){ if(!el) return; var t0 = null;
 function step(ts){ if(!t0) t0 = ts; var p = Math.min(1, (ts - t0) / dur); var e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(to * e) + '点'; if(p < 1) requestAnimationFrame(step);}
 requestAnimationFrame(step);}
+
+function rankName(t){ if(t>= 600) return '職業マスター'; if(t>= 520) return '渡りの達人'; if(t>= 420) return '一人前'; if(t>= 320) return '見習い卒業'; if(t>= 200) return 'かけだし'; return '修行中';}
+function colLoad(){ try { return JSON.parse(localStorage.getItem('rokuCol') || '{}');} catch(e){ return {};}}
+function colSave(c){ try { localStorage.setItem('rokuCol', JSON.stringify(c));} catch(e){}}
+function markVisited(k){ var c = colLoad(); if(!c.v) c.v = {}; if(c.v[k]) return false; c.v[k] = 1;
+var just = false;
+if(Object.keys(JOBS).every(function(j){ return c.v[j];}) && !c.done){ c.done = new Date().toISOString().slice(0, 10); c.total = Object.keys(JOBS).length; just = true;}
+colSave(c); return just;}
+function confetti(){ var colors = ['#ffd166','#0b7a68','#e07b39','#7fb3d5','#e88ca0'];
+for(var i = 0; i < 44; i++){ var d = document.createElement('div');
+d.style.cssText = 'position:fixed; top:-12px; left:' + (Math.random() * 100) + '%; width:' + (6 + Math.random() * 6) + 'px; height:' + (8 + Math.random() * 8) + 'px; background:' + colors[i % colors.length] + '; z-index:99; pointer-events:none; border-radius:2px;';
+d.animate([{ transform:'translateY(0) rotate(0deg)', opacity:1},{ transform:'translateY(105vh) rotate(' + (360 + Math.random() * 360) + 'deg)', opacity:0.9}], { duration: 2200 + Math.random() * 1400, delay: Math.random() * 350, easing:'cubic-bezier(.2,.7,.4,1)', fill:'forwards'});
+document.body.appendChild(d);
+(function(el){ setTimeout(function(){ el.remove();}, 4200);})(d);}}
 function showResult(){
 $('scr-play').classList.add('hidden'); $('scr-result').classList.remove('hidden');
 var shortest = bfs(S.start, S.target); var sh = shortest.length - 1;
@@ -359,14 +375,18 @@ var html = '第' + S.round + 'ゲーム（全5ゲーム）<br>スコア <span cl
 bd +
 'あなたのルート：' + names(S.path) + '<br>最短ルート：' + names(shortest) + '<br>' +
 'ここまでの合計：<b id="cumNum">0点</b>';
+var justComp = !!window.__justComp; window.__justComp = false;
+if(justComp && S.round < 5){ html += '<br><b style="color:#e07b39;">図鑑コンプリート！ 全' + Object.keys(JOBS).length + '職を制覇</b>'; setTimeout(confetti, 500);}
 if(S.round>= 5){
-var tier;
-if(S.total>= 600) tier = '満点！ 特別称号「職業マスター」です。';
-else if(S.total>= 520) tier = 'すごい！ 超マイナー職業の図鑑が全部開く点数です。';
-else if(S.total>= 420) tier = '図鑑がほぼ全部開く点数です。';
-else if(S.total>= 320) tier = '図鑑が開く点数です。';
-else tier = '図鑑まであと少し。もう一度挑戦を。';
-html += '<br><br><b>5ゲーム合計：<span id="finNum">0点</span></b><br>' + tier + '<br><span style="font-size:12.5px; color:#7a7565;">（超マイナー職業の図鑑は準備中です）</span>';
+var rank = rankName(S.total);
+var best = 0; try { best = parseInt(localStorage.getItem('rokuBest') || '0', 10) || 0;} catch(e){}
+var newBest = S.total > best;
+if(newBest){ try { localStorage.setItem('rokuBest', String(S.total));} catch(e){}}
+var extra = '';
+if(newBest) extra += '<br><b style="color:#e07b39;">自己ベスト更新！</b>';
+if(justComp){ extra += '<br><b style="color:#e07b39;">図鑑コンプリート！ 全' + Object.keys(JOBS).length + '職を制覇</b>';}
+html += '<br><br><b>5ゲーム合計：<span id="finNum">0点</span></b><br>ランク：<b>' + rank + '</b>' + extra;
+if(newBest || justComp) setTimeout(confetti, 500);
 $('btnRetry').textContent = '最初からあそぶ';
 } else {
 $('btnRetry').textContent = '次のゲームへ（第' + (S.round + 1) + 'ゲーム）';
@@ -376,7 +396,7 @@ countUp($('scoreNum'), total, 900);
 countUp($('cumNum'), S.total, 900);
 countUp($('finNum'), S.total, 1300);
 var txt = '【6駅先の職業】' + JOBS[S.start].name + 'から' + JOBS[S.target].name + 'まで' + S.hops + '手で到着！ スコア' + total + '点（最短' + sh + '手）';
-if(S.round>= 5) txt = '【6駅先の職業】5ゲーム合計' + S.total + '点でした！';
+if(S.round>= 5) txt = '【6駅先の職業】5ゲーム合計' + S.total + '点（ランク：' + rankName(S.total) + '）でした！';
 txt += '\nhttps://tklabo-caremane.github.io/occupation-game/\n#ブラウザゲーム #ミニゲーム';
 $('rShare').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt);
 window.scrollTo(0,0);
@@ -392,6 +412,8 @@ window.scrollTo(0,0);
 });
 $('btnHowtoOk').addEventListener('click', function(){ $('scr-howto').classList.add('hidden'); showPlay();});
 $('btnShuffle').addEventListener('click', pickPair);
+(function(){ var b = 0; try { b = parseInt(localStorage.getItem('rokuBest') || '0', 10) || 0;} catch(e){}
+if(b > 0) $('stBest').textContent = 'あなたの自己ベスト：' + b + '点（ランク：' + rankName(b) + '）';})();
 $('btnRetry').addEventListener('click', function(){
 if(S.round>= 5){ S.round = 1; S.total = 0; S.setPlan = null;} else { S.round++;}
 $('scr-result').classList.add('hidden'); $('scr-play').classList.add('hidden'); $('scr-start').classList.remove('hidden');
