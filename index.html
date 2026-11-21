@@ -300,6 +300,9 @@ showPlay();
 var pendingShow = false;
 $('vigClose').addEventListener('click', function(){ $('vig').style.display='none'; if(pendingShow){ pendingShow=false; showPlay();}});
 
+function countUp(el, to, dur){ if(!el) return; var t0 = null;
+function step(ts){ if(!t0) t0 = ts; var p = Math.min(1, (ts - t0) / dur); var e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(to * e) + '点'; if(p < 1) requestAnimationFrame(step);}
+requestAnimationFrame(step);}
 function showResult(){
 $('scr-play').classList.add('hidden'); $('scr-result').classList.remove('hidden');
 var shortest = bfs(S.start, S.target); var sh = shortest.length - 1;
@@ -311,11 +314,11 @@ if(!S.scored){ S.total += total; S.scored = true;}
 var bd = '到達点 ' + reach + ' ＋ 最短ボーナス ' + S.pool + '<br>';
 if(S.bonusLog.length) bd += S.bonusLog.join('<br>') + '<br>';
 if(ippitsu > 0) bd += '一筆書きボーナス +20<br>';
-var html = '第' + S.round + 'ゲーム（全5ゲーム）<br>スコア <span class="total">' + total + '点</span><br>' +
+var html = '第' + S.round + 'ゲーム（全5ゲーム）<br>スコア <span class="total" id="scoreNum">0点</span><br>' +
 'かかった手数：' + S.hops + '手（最短 ' + sh + '手）<br>' +
 bd +
 'あなたのルート：' + names(S.path) + '<br>最短ルート：' + names(shortest) + '<br>' +
-'ここまでの合計：<b>' + S.total + '点</b>';
+'ここまでの合計：<b id="cumNum">0点</b>';
 if(S.round>= 5){
 var tier;
 if(S.total>= 600) tier = '満点！ 特別称号「職業マスター」です。';
@@ -323,12 +326,15 @@ else if(S.total>= 520) tier = 'すごい！ 超マイナー職業の図鑑が全
 else if(S.total>= 420) tier = '図鑑がほぼ全部開く点数です。';
 else if(S.total>= 320) tier = '図鑑が開く点数です。';
 else tier = '図鑑まであと少し。もう一度挑戦を。';
-html += '<br><br><b>5ゲーム合計：' + S.total + '点</b><br>' + tier + '<br><span style="font-size:12.5px; color:#7a7565;">（超マイナー職業の図鑑は準備中です）</span>';
+html += '<br><br><b>5ゲーム合計：<span id="finNum">0点</span></b><br>' + tier + '<br><span style="font-size:12.5px; color:#7a7565;">（超マイナー職業の図鑑は準備中です）</span>';
 $('btnRetry').textContent = '最初からあそぶ';
 } else {
 $('btnRetry').textContent = '次のゲームへ（第' + (S.round + 1) + 'ゲーム）';
 }
 $('rScore').innerHTML = html;
+countUp($('scoreNum'), total, 900);
+countUp($('cumNum'), S.total, 900);
+countUp($('finNum'), S.total, 1300);
 var txt = '【6駅先の職業】' + JOBS[S.start].name + 'から' + JOBS[S.target].name + 'まで' + S.hops + '手で到着！ スコア' + total + '点（最短' + sh + '手）';
 if(S.round>= 5) txt = '【6駅先の職業】5ゲーム合計' + S.total + '点でした！';
 txt += '\nhttps://tklabo-caremane.github.io/occupation-game/\n#ブラウザゲーム #ミニゲーム';
