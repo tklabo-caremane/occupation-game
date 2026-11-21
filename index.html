@@ -13,6 +13,10 @@ h1 { font-size: 22px; text-align:center; margin: 10px 0 2px;}
 .sub { text-align:center; color:#7a7565; font-size:12.5px; margin-bottom:14px;}
 .card { background:#fffdf6; border:1.5px solid #e3dcc4; border-radius:14px; padding:14px; margin-bottom:12px;}
 .jobname { font-size:24px; font-weight:bold; text-align:center; margin:2px 0 8px;}
+.namerow { display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.namerow .jobname { text-align:left; margin:8px 0;}
+.namerow .pop { text-align:right; margin:0; font-size:12px; line-height:1.5;}
+.namerow .bignum { font-size:16px;}
 .jobimg { width:100%; border-radius:10px; display:block;}
 .desc { font-size:14px; line-height:1.75; margin:10px 2px 2px;}
 .status { font-size:13.5px; background:#f2ecd8; border-radius:9px; padding:8px 11px; line-height:1.7;}
@@ -92,16 +96,15 @@ body { background-color:#fdf6e3; background-image:none;}
 
 <div id="scr-play" class="hidden">
 <div id="pGoal"></div>
-<div class="jobname" id="pName"></div>
+<div class="namerow"><div class="jobname" id="pName"></div><p class="pop" id="pPop"></p></div>
 <div class="stage">
 <img class="jobimg" id="pImg" alt="">
 <div id="pBtns"></div>
 </div>
-<div class="btns" id="pBtns2"></div>
 <div class="motto" id="pMotto" style="display:none"></div>
 <p class="desc" id="pDesc"></p>
 <p class="plink" id="pLink"></p>
-<p class="pop" id="pPop"></p>
+<div class="btns" id="pBtns2"></div>
 <div style="text-align:center;"><div class="status" id="pStatus"></div></div>
 
 </div>
@@ -286,7 +289,7 @@ b.addEventListener('click', function(){ move(nx);});
 }
 var b2 = $('pBtns2');
 b2.style.opacity = '0'; b2.style.transform = 'translateY(8px)'; b2.style.pointerEvents = 'none';
-setTimeout(function(){ b2.style.transition = 'opacity .35s ease, transform .35s ease'; b2.style.opacity = '1'; b2.style.transform = 'none'; b2.style.pointerEvents = 'auto'; }, 800);
+setTimeout(function(){ b2.style.transition = 'opacity .7s ease, transform .7s ease'; b2.style.opacity = '1'; b2.style.transform = 'none'; b2.style.pointerEvents = 'auto'; }, 1600);
 window.scrollTo(0,0);
 }
 function move(nx){
