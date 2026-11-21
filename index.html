@@ -227,7 +227,7 @@ var EDGES = [
 ['patissier','panya'],['patissier','nouka'],['patissier','ryouri'],
 ['shikaeisei','haisha'],['shikaeisei','hoiku'],['shikaeisei','sensei'],
 ['fukushishi','caremane'],['fukushishi','shiyakusho'],['fukushishi','helper'],
-['haikankou','daiku'],['haikankou','denki'],['haikankou','fudousan']
+['haikankou','daiku'],['haikankou','denki'],['haikankou','fudousan'],['eiyoushi','isha'],['eiyoushi','kangoshi']
 ];
 var ADJ = {}; Object.keys(JOBS).forEach(function(k){ ADJ[k]=[];});
 EDGES.forEach(function(e){ ADJ[e[0]].push(e[1]); ADJ[e[1]].push(e[0]);});
@@ -261,7 +261,7 @@ var REASON = {
 'panya|patissier':'お菓子の隣の店', 'nouka|patissier':'果物の仕入れ', 'patissier|ryouri':'食後のデザート',
 'haisha|shikaeisei':'診療の相方', 'hoiku|shikaeisei':'園の歯みがき指導', 'sensei|shikaeisei':'学校の歯科検診',
 'caremane|fukushishi':'相談の相方', 'fukushishi|shiyakusho':'福祉の窓口', 'fukushishi|helper':'生活の支援',
-'daiku|haikankou':'現場の相方', 'denki|haikankou':'現場の相方', 'fudousan|haikankou':'水漏れの修理'
+'daiku|haikankou':'現場の相方', 'denki|haikankou':'現場の相方', 'fudousan|haikankou':'水漏れの修理', 'eiyoushi|isha':'治療食の相談', 'eiyoushi|kangoshi':'食事の見守り'
 };
 function reason(a,b){ return REASON[a+'|'+b] || REASON[b+'|'+a] || '';}
 var S = { start:'ryoushi', target:'caremane', cur:null, hops:0, path:[], rares:[], round:1, total:0, scored:false, pool:0, bonus:0, bonusLog:[], hubHit:{}, rareHit:{}, setPlan:null, deducted:false, posted:false};
