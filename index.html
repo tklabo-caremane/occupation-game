@@ -230,10 +230,15 @@ var REASON = {
 'daiku|haikankou':'現場の相方', 'denki|haikankou':'現場の相方', 'fudousan|haikankou':'水漏れの修理'
 };
 function reason(a,b){ return REASON[a+'|'+b] || REASON[b+'|'+a] || '';}
-var S = { start:'ryoushi', target:'caremane', cur:null, hops:0, path:[], rares:[], round:1, total:0, scored:false};
+var S = { start:'ryoushi', target:'caremane', cur:null, hops:0, path:[], rares:[], round:1, total:0, scored:false, pool:0, bonus:0, bonusLog:[], hubHit:{}, rareHit:{}, setPlan:null};
+var HUBS = ['hoiku','caremane','ryouri','nouka','shiyakusho','sensei'];
+var RARES = ['shisho','patissier','juuishi','hanaya','cameraman'];
+
 var $ = function(id){ return document.getElementById(id);};
 function pickPair(){ var ks = Object.keys(JOBS); var pairs = [];
-ks.forEach(function(a){ ks.forEach(function(b){ if(a!== b){ var p = bfs(a,b); if(p && p.length - 1>= 3) pairs.push([a,b]);}});});
+if(!S.setPlan){ var base = [3,3,3,4,4]; for(var i = base.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = base[i]; base[i] = base[j]; base[j] = t;} S.setPlan = base;}
+var want = S.setPlan[S.round - 1];
+ks.forEach(function(a){ ks.forEach(function(b){ if(a!== b){ var p = bfs(a,b); if(p && p.length - 1 === want) pairs.push([a,b]);}});});
 var pr = pairs[Math.floor(Math.random() * pairs.length)]; S.start = pr[0]; S.target = pr[1];
 $('roundView').textContent = '第' + S.round + 'ゲーム（全5ゲーム）／ 合計 ' + S.total + '点';
 $('pairView').innerHTML = '出発：<b>' + JOBS[S.start].name + '</b><br>↓<br>目的地：<b>' + JOBS[S.target].name + '</b>';}
@@ -280,9 +285,16 @@ b.addEventListener('click', function(){ move(nx);});
 window.scrollTo(0,0);
 }
 function move(nx){
+var remBefore = bfs(S.cur, S.target).length - 1;
 S.hops++; S.path.push(nx); S.cur = nx;
+var remAfter = bfs(nx, S.target).length - 1;
+if(remAfter >= remBefore) S.pool = Math.max(0, S.pool - 10);
 if (nx === S.target){ showPlay(); return;}
-
+var shT = bfs(S.start, S.target).length - 1;
+if(S.hops <= shT){
+if(HUBS.indexOf(nx) >= 0 && S.hops <= 3 && !S.hubHit[nx]){ S.hubHit[nx] = 1; S.bonus += 10; S.bonusLog.push('ハブボーナス（' + JOBS[nx].name + '）+10');}
+if(RARES.indexOf(nx) >= 0 && !S.rareHit[nx]){ S.rareHit[nx] = 1; S.bonus += 10; S.bonusLog.push('レア経由ボーナス（' + JOBS[nx].name + '）+10');}
+}
 showPlay();
 }
 var pendingShow = false;
@@ -291,20 +303,25 @@ $('vigClose').addEventListener('click', function(){ $('vig').style.display='none
 function showResult(){
 $('scr-play').classList.add('hidden'); $('scr-result').classList.remove('hidden');
 var shortest = bfs(S.start, S.target); var sh = shortest.length - 1;
-var base = 1000, over = Math.max(0, S.hops - sh) * 80;
-var total = Math.max(50, base - over);
+var reach = 50;
+var uniq = S.path.filter(function(v, i){ return S.path.indexOf(v) === i;}).length === S.path.length;
+var ippitsu = (uniq && S.hops <= sh) ? 20 : 0;
+var total = reach + S.pool + S.bonus + ippitsu;
 if(!S.scored){ S.total += total; S.scored = true;}
+var bd = '到達点 ' + reach + ' ＋ 最短ボーナス ' + S.pool + '<br>';
+if(S.bonusLog.length) bd += S.bonusLog.join('<br>') + '<br>';
+if(ippitsu > 0) bd += '一筆書きボーナス +20<br>';
 var html = '第' + S.round + 'ゲーム（全5ゲーム）<br>スコア <span class="total">' + total + '点</span><br>' +
 'かかった手数：' + S.hops + '手（最短 ' + sh + '手）<br>' +
-'基本点 ' + base + ' − 超過ペナルティ ' + over + '<br>' +
+bd +
 'あなたのルート：' + names(S.path) + '<br>最短ルート：' + names(shortest) + '<br>' +
 'ここまでの合計：<b>' + S.total + '点</b>';
 if(S.round>= 5){
 var tier;
-if(S.total>= 5000) tier = '満点！ 特別称号「職業マスター」です。';
-else if(S.total>= 4920) tier = 'すごい！ 超マイナー職業の図鑑が全部開く点数です。';
-else if(S.total>= 4200) tier = '図鑑がほぼ全部開く点数です。';
-else if(S.total>= 3500) tier = '図鑑が開く点数です。';
+if(S.total>= 600) tier = '満点！ 特別称号「職業マスター」です。';
+else if(S.total>= 520) tier = 'すごい！ 超マイナー職業の図鑑が全部開く点数です。';
+else if(S.total>= 420) tier = '図鑑がほぼ全部開く点数です。';
+else if(S.total>= 320) tier = '図鑑が開く点数です。';
 else tier = '図鑑まであと少し。もう一度挑戦を。';
 html += '<br><br><b>5ゲーム合計：' + S.total + '点</b><br>' + tier + '<br><span style="font-size:12.5px; color:#7a7565;">（超マイナー職業の図鑑は準備中です）</span>';
 $('btnRetry').textContent = '最初からあそぶ';
@@ -320,11 +337,12 @@ window.scrollTo(0,0);
 }
 $('btnStart').addEventListener('click', function(){
 S.cur = S.start; S.hops = 0; S.path = [S.start]; S.rares = []; S.scored = false;
+S.pool = (bfs(S.start, S.target).length - 1) * 10; S.bonus = 0; S.bonusLog = []; S.hubHit = {}; S.rareHit = {};
 showPlay();
 });
 $('btnShuffle').addEventListener('click', pickPair);
 $('btnRetry').addEventListener('click', function(){
-if(S.round>= 5){ S.round = 1; S.total = 0;} else { S.round++;}
+if(S.round>= 5){ S.round = 1; S.total = 0; S.setPlan = null;} else { S.round++;}
 $('scr-result').classList.add('hidden'); $('scr-play').classList.add('hidden'); $('scr-start').classList.remove('hidden');
 pickPair();
 });
