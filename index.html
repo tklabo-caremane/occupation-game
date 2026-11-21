@@ -257,8 +257,8 @@ $('pLink').style.display = 'block';
 $('pLink').innerHTML = JOBS[pv].name + 'からのつながり：<b>' + reason(pv, S.cur) + '</b>';}
 else { $('pLink').style.display = 'none';}
 var st;
-if (S.cur === S.target && S.hops> 0) st = '<b>ゴール到着！</b> ／ かかった手数：<b>' + S.hops + '手</b>';
-else st = '<b>' + S.hops + '手</b>';
+if (S.cur === S.target && S.hops> 0) st = '<b>ゴール到着！</b> ／ かかった手数：<b>' + S.hops + '手</b>（最短 ' + bfs(S.start, S.target) + '手）';
+else st = '<b>' + S.hops + '手</b> ／ 目標は最短 ' + bfs(S.start, S.target) + '手';
 $('pGoal').innerHTML = '<span class="goalpill">目的地：' + JOBS[S.target].name + '</span><span class="goalhint">' + hint() + '</span>';
 $('pStatus').innerHTML = st;
 var box = $('pBtns'); box.innerHTML='';
