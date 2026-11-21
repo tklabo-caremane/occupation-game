@@ -70,6 +70,8 @@ body { background-color:#fdf6e3; background-image:none;}
 .pop { text-align:center; color:#7a7565; font-size:13px; margin:7px 0 0;}
 .pop .bignum { display:inline-block; margin-top:5px; font-size:20px; font-weight:900; color:#0b7a68; background:#fff; border:2px solid #ffd166; border-radius:999px; padding:3px 16px;}
 .descLead { font-size:16.5px; font-weight:bold;}
+.descLead .wv { display:inline-block; animation:wvAnim .7s ease-in-out both;}
+@keyframes wvAnim { 0%, 100% { transform:translateY(0);} 30% { transform:translateY(-6px);} 60% { transform:translateY(2px);}}
 .status { display:inline-block; border-radius:999px; background:#fff; box-shadow:0 2px 0 rgba(180,160,110,.4); padding:6px 15px; margin-top:12px;}
 #pGoal { position:sticky; top:8px; z-index:6; text-align:right; margin:2px 0 2px;}
 #pGoal .goalpill { display:inline-block; background:#0b7a68; color:#fff; font-weight:900; font-size:16.5px; border-radius:999px; padding:7px 16px; box-shadow:0 3px 8px rgba(11,122,104,.35);}
@@ -258,7 +260,10 @@ var j = JOBS[S.cur];
 $('pName').innerHTML = '<span>' + j.name + '</span>';
 $('pImg').src = IMG[S.cur];
 var dp = j.desc.split('。'); var dfirst = dp.shift();
-$('pDesc').innerHTML = '<span class="descLead">' + dfirst + '。</span>' + dp.join('。');
+var lead = dfirst + '。';
+var wvHtml = lead.split('').map(function(c, i){ return '<span class="wv" style="animation-delay:' + (i * 0.035).toFixed(3) + 's">' + c + '</span>';}).join('');
+window.__waveMs = 700 + Math.max(0, lead.length - 1) * 35;
+$('pDesc').innerHTML = '<span class="descLead">' + wvHtml + '</span>' + dp.join('。');
 $('pMotto').innerHTML = j.motto.map(function(p, i){ return '<span class="mph" style="animation-delay:' + (0.2 + i * 0.75) + 's">' + p + '</span>';}).join('');
 var pp = j.pop.split('―');
 $('pPop').innerHTML = pp[0].trim() + '<br><span class="bignum">' + (pp[1] ? pp[1].trim() : '') + '</span>';
@@ -290,7 +295,7 @@ b.addEventListener('click', function(){ move(nx);});
 var b2 = $('pBtns2');
 if(window.__btnTimer) clearTimeout(window.__btnTimer);
 b2.style.transition = 'none'; b2.style.opacity = '0'; b2.style.transform = 'translateY(8px)'; b2.style.pointerEvents = 'none';
-window.__btnTimer = setTimeout(function(){ b2.style.transition = 'opacity .7s ease, transform .7s ease'; b2.style.opacity = '1'; b2.style.transform = 'none'; b2.style.pointerEvents = 'auto'; }, 1600);
+window.__btnTimer = setTimeout(function(){ b2.style.transition = 'opacity .7s ease, transform .7s ease'; b2.style.opacity = '1'; b2.style.transform = 'none'; b2.style.pointerEvents = 'auto'; }, (window.__waveMs || 0) + 1600);
 window.scrollTo(0,0);
 }
 function move(nx){
