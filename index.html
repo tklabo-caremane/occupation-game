@@ -38,7 +38,7 @@ select { border:1.5px solid #cfc8ae; background:#fff;}
 #vig .box { background:#f7f2e2; border-radius:14px; max-width:400px; width:100%; padding:26px 18px; text-align:center; color:#55503f;}
 #vig .close { margin-top:16px; padding:11px 26px; font-size:15px; border:none; border-radius:10px; background:#0b7a68; color:#fff; font-weight:bold; cursor:pointer;}
 .hidden { display:none;}
-body { background-color:#fdf6e3; background-image:radial-gradient(#f3d9a4 3px, transparent 3.6px), radial-gradient(#f6c6d8 3px, transparent 3.6px); background-size:92px 92px; background-position:0 0, 46px 46px;}
+body { background-color:#fdf6e3; background-image:none;}
 .logoWrap { text-align:center; padding:34px 0 16px;}
 .logo { font-size:46px; font-weight:900; letter-spacing:2px;}
 .logo span { display:inline-block; text-shadow:2px 3px 0 #fff;}
@@ -49,7 +49,7 @@ body { background-color:#fdf6e3; background-image:radial-gradient(#f3d9a4 3px, t
 .jobname { font-size:29px; margin:8px 0 12px;}
 .jobname span { border-bottom:6px solid #ffd166; border-radius:3px; padding:0 8px;}
 .stage { position:relative; max-width:470px; margin:0 auto 4px;}
-.jobimg { width:78%; margin:0 auto; border-radius:24px; box-shadow:9px 10px 0 rgba(232,67,147,.18);}
+.jobimg { width:78%; margin:0 auto; border-radius:24px; box-shadow:0 4px 14px rgba(90,70,20,.15);}
 .nbtn { position:absolute; z-index:3; box-shadow:0 3px 0 rgba(11,122,104,.35);}
 .bp-l { left:-2px; top:42%;}
 .bp-r { right:-2px; top:42%;}
@@ -265,16 +265,14 @@ var box = $('pBtns'); box.innerHTML='';
 var box2 = $('pBtns2'); box2.innerHTML='';
 if (S.cur === S.target && S.hops> 0){
 var gb = document.createElement('button'); gb.className='gobtn goalbtn'; gb.textContent='ゴール！ 結果を見る';
-gb.addEventListener('click', showResult); box.appendChild(gb);
+gb.addEventListener('click', showResult); box2.appendChild(gb);
 } else {
 var letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 var prev = S.path.length>= 2 ? S.path[S.path.length - 2] : null;
 var list = ADJ[S.cur].filter(function(nx){ return nx!== prev;});
-var pos = list.length=== 1 ? ['bp-b'] : list.length=== 2 ? ['bp-l','bp-r'] : ['bp-l','bp-r','bp-b'];
 list.forEach(function(nx, i){
 var b = document.createElement('button');
-if (i< 3){ b.className='nbtn ' + pos[i]; box.appendChild(b);}
-else { b.className='nbtn'; box2.appendChild(b);}
+b.className='nbtn'; box2.appendChild(b);
 b.innerHTML = '<span class="lt">' + letters[i] + '</span>' + JOBS[nx].name;
 b.addEventListener('click', function(){ move(nx);});
 });
@@ -284,7 +282,7 @@ window.scrollTo(0,0);
 function move(nx){
 S.hops++; S.path.push(nx); S.cur = nx;
 if (nx === S.target){ showPlay(); return;}
-if (S.hops % 3 === 0){ $('vig').style.display='flex'; pendingShow = true; return;}
+
 showPlay();
 }
 var pendingShow = false;
@@ -331,6 +329,6 @@ $('scr-result').classList.add('hidden'); $('scr-play').classList.add('hidden'); 
 pickPair();
 });
 </script>
-<p style="text-align:center; font-size:12px; color:#7a7565; margin:18px 0 8px;"><a href="https://tklabo-caremane.github.io/">TKラボ トップ</a>　／　<a href="https://tklabo-caremane.github.io/privacy-policy/">プライバシーポリシー</a>　／　お問い合わせ：caremane.techo@gmail.com</p>
+<section style="max-width:640px;margin:24px auto;padding:20px 16px;background:#fffdf6;border:1.5px solid #e3dcc4;border-radius:14px;line-height:1.8;"><h2 style="font-size:19px;">このゲームについて</h2><p>『6駅先の職業』は、職業どうしの「つながり」をたどってゴールを目指すブラウザゲームです。世の中の仕事は、意外なところでつながっています。出発の職業から、つながりのある職業へ少しずつ移動して、目的地の職業にたどり着いてください。</p><h2 style="font-size:19px;">遊び方</h2><p>スタートと目的地が自動で決まります。今いる職業とつながりのある職業がボタンで表示されるので、目的地に近づきそうなものを選んで進みます。なぜつながっているかは、移った先で分かります。手数が少ないほど高得点で、全5ゲームの合計点を競います。</p><details><summary style="font-size:17px;font-weight:bold;cursor:pointer;padding:8px 0;">登場する40の職業（説明と格言を開く）</summary><ul style="padding-left:20px;"><li><a href="https://tklabo-caremane.github.io/gallery/ryoushi.html">漁師</a>：海に出て魚を獲る仕事。天気と潮を読むのが腕の見せどころ。獲った魚は市場や料理人のもとへ届きます。（全国に約12万人 ― 約1,000人に1人）格言「大漁の／旗に食卓／笑顔咲く」</li><li><a href="https://tklabo-caremane.github.io/gallery/ryouri.html">料理人</a>：食材を料理に変える仕事。仕入れと仕込みから始まり、味と見た目と、出すタイミングをそろえます。（全国に約210万人 ― 約60人に1人）格言「食材の／命を生かして／皿に盛る」</li><li><a href="https://tklabo-caremane.github.io/gallery/caremane.html">ケアマネジャー</a>：高齢の人が自宅で暮らし続けられるよう、介護サービスの計画（ケアプラン）を立てる仕事。利用者と家族と事業者の間をつなぎます。（全国に約22万人 ― 約550人に1人）格言「一人では／解けぬ困りを／ほどいてく」</li><li><a href="https://tklabo-caremane.github.io/gallery/hoiku.html">保育士</a>：保育園で小さな子どもたちの生活と遊びを見守る仕事。食事も昼寝も外遊びも、1日の流れ全部が仕事場です。（全国に約68万人 ― 約180人に1人）格言「泣く子にも／笑う子にでも／膝をつく」</li><li><a href="https://tklabo-caremane.github.io/gallery/daiku.html">大工</a>：木を切って組み、家を建てる仕事。道具はカンナやノコギリ。住む人の暮らしに合わせて、住宅の直しもします。（全国に約30万人 ― 約420人に1人）格言「釘一つ／家の命を／支えてる」</li><li><a href="https://tklabo-caremane.github.io/gallery/dagashi.html">駄菓子屋</a>：10円単位のお菓子を売る小さな店の仕事。子どもたちの「社会の入り口」でもあります。全国で減り続けています。（全国に約6,000軒 ― 約2万人に1軒）格言「十円の／夢を売る店／笑顔添え」</li><li><a href="https://tklabo-caremane.github.io/gallery/nouka.html">農家</a>：畑や田んぼで野菜や米を育てる人。育てた作物は市場や八百屋を通して、まちの食卓に届きます。（全国に約120万人 ― 約100人に1人）格言「日本の／食を支える／田畑から」</li><li><a href="https://tklabo-caremane.github.io/gallery/panya.html">パン屋</a>：朝早くからパンを焼く店。焼きたての匂いが、まちの朝の合図になります。（全国に約1万軒 ― 約1万2千人に1軒）格言「パンひとつ／朝の元気を／詰め込んで」</li><li><a href="https://tklabo-caremane.github.io/gallery/yaoya.html">八百屋</a>：野菜や果物を売る店。農家から届いた旬のものを、料理人や家庭に渡します。（全国に約2万軒 ― 約6,000人に1軒）格言「旬の味／まちの食卓／彩って」</li><li><a href="https://tklabo-caremane.github.io/gallery/truck.html">トラック運転手</a>：荷物を運ぶ運転手。魚も野菜も材料も、この人たちが運んでまちが回っています。（全国に約85万人 ― 約150人に1人）格言「運ぶもの／今日も暮らしを／つないでる」</li><li><a href="https://tklabo-caremane.github.io/gallery/seibishi.html">自動車整備士</a>：車を点検して直す人。トラックもタクシーも農家の軽トラも、この人のおかげで走れます。（全国に約33万人 ― 約380人に1人）格言「安心の／裏に確かな／目が光る」</li><li><a href="https://tklabo-caremane.github.io/gallery/kangoshi.html">看護師</a>：病院や訪問の現場で、患者のそばにいる医療職。医者の診療を支え、患者の変化をいち早く見つけます。（全国に約130万人 ― 約100人に1人）格言「苦しみに／一番近く／寄り添って」</li><li><a href="https://tklabo-caremane.github.io/gallery/isha.html">医者</a>：病気やけがを診て治す人。救急車の受け入れ先であり、ケアマネが相談する主治医でもあります。（全国に約34万人 ― 約360人に1人）格言「病む人の／命の道を／照らし出す」</li><li><a href="https://tklabo-caremane.github.io/gallery/yakuzai.html">薬剤師</a>：薬を調剤して渡す人。医者の処方箋を受け取り、飲み合わせの確認をする薬の専門家です。（全国に約32万人 ― 約390人に1人）格言「一錠の／重さを知って／手渡して」</li><li><a href="https://tklabo-caremane.github.io/gallery/sensei.html">学校の先生</a>：学校で子どもに教える人。給食、遠足、卒業アルバムなど、まちのいろんな職業と関わります。（全国に約42万人 ― 約300人に1人）格言「教えるは／未来の種を／蒔いてゆく」</li><li><a href="https://tklabo-caremane.github.io/gallery/cameraman.html">カメラマン</a>：写真を撮る仕事の人。保育園の行事や卒業アルバムなど、節目の記録を残します。（全国に約5万人 ― 約2,500人に1人）格言「シャッターを／切れば笑顔が／未来行く」</li><li><a href="https://tklabo-caremane.github.io/gallery/shiyakusho.html">市役所職員</a>：役所で住民の手続きを受ける人。介護保険の窓口であり、図書館や届け出の受け付けも担います。（全国に約160万人 ― 約80人に1人）格言「一枚の／書類の向こう／暮らしあり」</li><li><a href="https://tklabo-caremane.github.io/gallery/keisatsu.html">警察官</a>：まちの安全を守る人。交通安全教室で学校に行ったり、事故や災害の現場で消防と連携したりします。（全国に約26万人 ― 約480人に1人）格言「夜のまち／安心のため／足音する」</li><li><a href="https://tklabo-caremane.github.io/gallery/shoubou.html">消防士</a>：火事や救急の現場に出動する人。飲食店の火災予防の点検も仕事のひとつです。（全国に約17万人 ― 約740人に1人）格言「火の中へ／命を抱いて／駆け戻る」</li><li><a href="https://tklabo-caremane.github.io/gallery/yuubin.html">郵便配達員</a>：手紙や荷物を届ける人。役所からの郵便も、農家の荷物の集荷も、この人が運びます。（全国に約20万人 ― 約620人に1人）格言「手紙には／心が入って／届いてく」</li><li><a href="https://tklabo-caremane.github.io/gallery/fudousan.html">不動産屋</a>：家や土地の売り買いと貸し借りを仲介する人。リフォームや住み替えの相談先になります。（全国に約130万人 ― 約100人に1人）格言「暮らしの／舞台を探し／鍵渡す」</li><li><a href="https://tklabo-caremane.github.io/gallery/helper.html">ヘルパー</a>：自宅や施設で介護をする人。ケアマネの計画に沿って、毎日の暮らしを直接支えます。（全国に約210万人 ― 約60人に1人）格言「家で住む／当たり前をば／支えてる」</li><li><a href="https://tklabo-caremane.github.io/gallery/haisha.html">歯医者</a>：歯を診る医者。保育園や学校の歯科検診も担当する、子どもにも身近な医療職です。（全国に約10万人 ― 約1,200人に1人）格言「噛む力／食べる楽しみ／いつまでも」</li><li><a href="https://tklabo-caremane.github.io/gallery/juuishi.html">獣医</a>：動物のお医者さん。ペットの診察のほか、農家の家畜の健康も診ます。（全国に約4万人 ― 約3,100人に1人）格言「言葉なき／命の声を／聞き取って」</li><li><a href="https://tklabo-caremane.github.io/gallery/shisho.html">司書</a>：図書館で本と人を結ぶ専門職。学校の調べ学習の相談にも乗ります。（全国に約2.2万人 ― 約5,600人に1人）格言「本の森／知の道しるべ／そっと置く」</li><li><a href="https://tklabo-caremane.github.io/gallery/denki.html">電気工事士</a>：電気の配線工事をする人。大工と同じ現場で働き、家や店の電気を入れます。（全国に約38万人 ― 約330人に1人）格言「灯る夜の／裏に確かな／技が光る」</li><li><a href="https://tklabo-caremane.github.io/gallery/bus.html">バス運転手</a>：路線バスや園バス、遠足バスの運転手。毎日の足を支える運転の仕事です。（全国に約12万人 ― 約1,000人に1人）格言「雨の日も／まちの足となる／バス走る」</li><li><a href="https://tklabo-caremane.github.io/gallery/taxi.html">タクシー運転手</a>：タクシーを運転する人。介護タクシーとして、通院の足を担うこともあります。（全国に約22万人 ― 約560人に1人）格言「雨の夜も／行灯ともし／足になる」</li><li><a href="https://tklabo-caremane.github.io/gallery/kenchiku.html">建築士</a>：建物を設計する人。設計図を描き、役所の建築確認を受けて、大工に現場を託します。（全国に約38万人 ― 約330人に1人）格言「描く線は／まちの未来を／作り出す」</li><li><a href="https://tklabo-caremane.github.io/gallery/biyoushi.html">美容師</a>：髪を切って整える人。店に来られない高齢者の家へ行く訪問美容もあります。（全国に約58万人 ― 約210人に1人）格言「髪切って／心も軽く／笑顔咲く」</li><li><a href="https://tklabo-caremane.github.io/gallery/ekiin.html">駅員</a>：駅で切符の案内や乗り換えの手伝いをする人。まちの玄関口を守り、旅の始まりと終わりを見送る。（全国に約10万人 ― 約1,200人に1人）格言「人運び／街の営み／回しゆく」</li><li><a href="https://tklabo-caremane.github.io/gallery/hanaya.html">花屋</a>：季節の花を売る店。卒園式の花束も、母の日の一輪も、ここから届く。（全国に約5万人 ― 約2,500人に1人）格言「言葉では／言えぬ気持ちを／花託す」</li><li><a href="https://tklabo-caremane.github.io/gallery/konbini.html">コンビニ店員</a>：24時間、まちの灯りをともす店。おにぎりの買い物も、宅配の受け取りも、ここが窓口になる。（全国に約100万人 ― 約120人に1人）格言「コンビニの／灯りがまちを／照らし出す」</li><li><a href="https://tklabo-caremane.github.io/gallery/rigaku.html">理学療法士</a>：体の動きを取り戻す手伝いをする人。歩く・立つ・座るのリハビリの専門家。（全国に約20万人 ― 約600人に1人）格言「一歩ずつ／暮らしの中へ／連れ戻す」</li><li><a href="https://tklabo-caremane.github.io/gallery/eiyoushi.html">栄養士</a>：献立を考え、食べることで健康を支える人。学校給食の裏方でもある。（全国に約25万人 ― 約500人に1人）格言「献立に／健やか願う／今日も立つ」</li><li><a href="https://tklabo-caremane.github.io/gallery/sakanaya.html">魚屋</a>：朝獲れの魚を並べる店。商店街の魚の匂いが、晩ごはんの合図になる。（全国に約1万軒 ― 約1万2千人に1軒）格言「旬を聞く／ならこの魚／すすめゆく」</li><li><a href="https://tklabo-caremane.github.io/gallery/patissier.html">パティシエ</a>：ケーキやお菓子を作る職人。誕生日のろうそくが灯るのは、この人のおかげ。（全国に約3万人 ― 約4,000人に1人）格言「祝いの日／甘い香りで／包み込む」</li><li><a href="https://tklabo-caremane.github.io/gallery/shikaeisei.html">歯科衛生士</a>：歯の掃除と歯みがき指導をする人。歯医者の診療をそばで支える。（全国に約15万人 ― 約800人に1人）格言「口のケア／食べる力を／支えゆく」</li><li><a href="https://tklabo-caremane.github.io/gallery/fukushishi.html">社会福祉士</a>：困りごとを抱えた人の相談に乗り、使える制度につなげる専門職。暮らしの困りごとの、最初の相談先になる。（全国に約25万人 ― 約500人に1人）格言「制度の名／知らぬ暮らしに／橋渡す」</li><li><a href="https://tklabo-caremane.github.io/gallery/haikankou.html">配管工</a>：水道の配管を直す職人。水漏れも、詰まりも、この人がいれば安心。（全国に約20万人 ― 約600人に1人）格言「見えぬ場所／水の命を／守り抜く」</li></ul></details><p>運営：TKラボ。職業の人数は公的統計などをもとにした概数です。</p><p><a href="#">↑ ページの先頭（ゲーム）に戻る</a></p></section><p style="text-align:center; font-size:12px; color:#7a7565; margin:18px 0 8px;"><a href="https://tklabo-caremane.github.io/">TKラボ トップ</a>　／　<a href="https://tklabo-caremane.github.io/privacy-policy/">プライバシーポリシー</a>　／　お問い合わせ：caremane.techo@gmail.com</p>
 </body>
 </html>
