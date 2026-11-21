@@ -95,6 +95,7 @@ body { background-color:#fdf6e3; background-image:none;}
 <button class="gobtn" id="btnStart">この組み合わせでスタート</button>
 <button class="gobtn sub2" id="btnShuffle">組み合わせを変える</button>
 <p id="stBest" style="font-size:12.5px; color:#e07b39; font-weight:bold; margin:4px 0 0;"></p>
+<p id="stWeek" style="font-size:12.5px; color:#7a7565; margin:2px 0 0;"></p>
 <p style="font-size:12.5px; color:#7a7565; line-height:1.6;">隣の職業へ渡って、目的地を目指します。なぜつながっているかは、移った先のページで分かります。手数が少ないほど高得点です。全5ゲームの合計点で勝負です。職業の人数は公的統計などの概数です。</p>
 </div>
 </div>
@@ -263,9 +264,10 @@ var REASON = {
 'daiku|haikankou':'現場の相方', 'denki|haikankou':'現場の相方', 'fudousan|haikankou':'水漏れの修理'
 };
 function reason(a,b){ return REASON[a+'|'+b] || REASON[b+'|'+a] || '';}
-var S = { start:'ryoushi', target:'caremane', cur:null, hops:0, path:[], rares:[], round:1, total:0, scored:false, pool:0, bonus:0, bonusLog:[], hubHit:{}, rareHit:{}, setPlan:null, deducted:false};
+var S = { start:'ryoushi', target:'caremane', cur:null, hops:0, path:[], rares:[], round:1, total:0, scored:false, pool:0, bonus:0, bonusLog:[], hubHit:{}, rareHit:{}, setPlan:null, deducted:false, posted:false};
 var HUBS = ['hoiku','caremane','ryouri','nouka','shiyakusho','sensei'];
 var RARES = ['shisho','patissier','juuishi','hanaya','cameraman'];
+var WURL = 'https://rokuji-scores.tac09280317.workers.dev';
 
 var $ = function(id){ return document.getElementById(id);};
 function pickPair(){ var ks = Object.keys(JOBS); var pairs = [];
@@ -385,7 +387,7 @@ if(newBest){ try { localStorage.setItem('rokuBest', String(S.total));} catch(e){
 var extra = '';
 if(newBest) extra += '<br><b style="color:#e07b39;">自己ベスト更新！</b>';
 if(justComp){ extra += '<br><b style="color:#e07b39;">図鑑コンプリート！ 全' + Object.keys(JOBS).length + '職を制覇</b>';}
-html += '<br><br><b>5ゲーム合計：<span id="finNum">0点</span></b><br>ランク：<b>' + rank + '</b>' + extra;
+html += '<br><br><b>5ゲーム合計：<span id="finNum">0点</span></b><br>ランク：<b>' + rank + '</b>' + extra + '<div id="weekBest" style="margin-top:6px;"></div>';
 if(newBest || justComp) setTimeout(confetti, 500);
 $('btnRetry').textContent = '最初からあそぶ';
 } else {
@@ -395,6 +397,14 @@ $('rScore').innerHTML = html;
 countUp($('scoreNum'), total, 900);
 countUp($('cumNum'), S.total, 900);
 countUp($('finNum'), S.total, 1300);
+if(S.round>= 5 && !S.posted){ S.posted = true;
+fetch(WURL + '/best').then(function(r){ return r.json();}).then(function(b){
+var prev = b.best || 0;
+return fetch(WURL + '/score', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ total: S.total })}).then(function(r){ return r.json();}).then(function(res){
+var el = $('weekBest'); if(!el) return;
+if(S.total > prev){ el.innerHTML = '<b style="color:#e07b39;">今週の最高点を更新！</b>（みんなの記録）'; confetti();}
+else { el.textContent = '今週の最高点（みんなの記録）：' + res.best + '点'; }
+});}).catch(function(){}); }
 var txt = '【6駅先の職業】' + JOBS[S.start].name + 'から' + JOBS[S.target].name + 'まで' + S.hops + '手で到着！ スコア' + total + '点（最短' + sh + '手）';
 if(S.round>= 5) txt = '【6駅先の職業】5ゲーム合計' + S.total + '点（ランク：' + rankName(S.total) + '）でした！';
 txt += '\nhttps://tklabo-caremane.github.io/occupation-game/\n#ブラウザゲーム #ミニゲーム';
@@ -413,9 +423,10 @@ window.scrollTo(0,0);
 $('btnHowtoOk').addEventListener('click', function(){ $('scr-howto').classList.add('hidden'); showPlay();});
 $('btnShuffle').addEventListener('click', pickPair);
 (function(){ var b = 0; try { b = parseInt(localStorage.getItem('rokuBest') || '0', 10) || 0;} catch(e){}
-if(b > 0) $('stBest').textContent = 'あなたの自己ベスト：' + b + '点（ランク：' + rankName(b) + '）';})();
+if(b > 0) $('stBest').textContent = 'あなたの自己ベスト：' + b + '点（ランク：' + rankName(b) + '）';
+fetch(WURL + '/best').then(function(r){ return r.json();}).then(function(w){ if(w && w.best > 0) $('stWeek').textContent = '今週の最高点（みんなの記録）：' + w.best + '点（ランク：' + rankName(w.best) + '）';}).catch(function(){});})();
 $('btnRetry').addEventListener('click', function(){
-if(S.round>= 5){ S.round = 1; S.total = 0; S.setPlan = null;} else { S.round++;}
+if(S.round>= 5){ S.round = 1; S.total = 0; S.setPlan = null; S.posted = false;} else { S.round++;}
 $('scr-result').classList.add('hidden'); $('scr-play').classList.add('hidden'); $('scr-start').classList.remove('hidden');
 pickPair();
 });
