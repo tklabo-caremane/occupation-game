@@ -33,6 +33,8 @@ select { border:1.5px solid #cfc8ae; background:#fff;}
 .gobtn.sub2 { background:#fff; color:#0b5a4d; border:2px solid #0b7a68;}
 .score { font-size:15px; line-height:1.9;}
 .score .total { font-size:26px; font-weight:bold; color:#0b7a68;}
+.bdline { display:block; opacity:0; animation:bdIn .45s ease forwards;}
+@keyframes bdIn { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:none;}}
 .share { display:block; text-align:center; margin-top:10px; padding:12px; background:#0b7a68; color:#fff; border-radius:11px; text-decoration:none; font-weight:bold;}
 #vig { display:none; position:fixed; inset:0; background:rgba(30,28,20,.92); z-index:50; align-items:center; justify-content:center; padding:20px;}
 #vig .box { background:#f7f2e2; border-radius:14px; max-width:400px; width:100%; padding:26px 18px; text-align:center; color:#55503f;}
@@ -311,11 +313,12 @@ var uniq = S.path.filter(function(v, i){ return S.path.indexOf(v) === i;}).lengt
 var ippitsu = (uniq && S.hops <= sh) ? 20 : 0;
 var total = reach + S.pool + S.bonus + ippitsu;
 if(!S.scored){ S.total += total; S.scored = true;}
-var bd = '到達点 ' + reach + ' ＋ 最短ボーナス ' + S.pool + '<br>';
-if(S.bonusLog.length) bd += S.bonusLog.join('<br>') + '<br>';
-if(ippitsu > 0) bd += '一筆書きボーナス +20<br>';
+var blines = ['到達点 ' + reach + ' ＋ 最短ボーナス ' + S.pool];
+if(S.bonusLog.length) blines = blines.concat(S.bonusLog);
+if(ippitsu > 0) blines.push('一筆書きボーナス +20');
+var bd = blines.map(function(t, i){ return '<span class="bdline" style="animation-delay:' + (0.55 + i * 0.35).toFixed(2) + 's">' + t + '</span>';}).join('');
 var html = '第' + S.round + 'ゲーム（全5ゲーム）<br>スコア <span class="total" id="scoreNum">0点</span><br>' +
-'かかった手数：' + S.hops + '手（最短 ' + sh + '手）<br>' +
+'<span class="bdline" style="animation-delay:0.2s">かかった手数：' + S.hops + '手（最短 ' + sh + '手）</span>' +
 bd +
 'あなたのルート：' + names(S.path) + '<br>最短ルート：' + names(shortest) + '<br>' +
 'ここまでの合計：<b id="cumNum">0点</b>';
