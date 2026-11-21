@@ -291,13 +291,12 @@ $('vigClose').addEventListener('click', function(){ $('vig').style.display='none
 function showResult(){
 $('scr-play').classList.add('hidden'); $('scr-result').classList.remove('hidden');
 var shortest = bfs(S.start, S.target); var sh = shortest.length - 1;
-var over = Math.max(0, S.hops - sh);
-var reach = 200, bonus = Math.max(0, 800 - over * 60);
-var total = reach + bonus;
+var base = 1000, over = Math.max(0, S.hops - sh) * 80;
+var total = Math.max(50, base - over);
 if(!S.scored){ S.total += total; S.scored = true;}
 var html = '第' + S.round + 'ゲーム（全5ゲーム）<br>スコア <span class="total">' + total + '点</span><br>' +
 'かかった手数：' + S.hops + '手（最短 ' + sh + '手）<br>' +
-'到達点 ' + reach + ' ＋ 最短ボーナス ' + bonus + '<br>' +
+'基本点 ' + base + ' − 超過ペナルティ ' + over + '<br>' +
 'あなたのルート：' + names(S.path) + '<br>最短ルート：' + names(shortest) + '<br>' +
 'ここまでの合計：<b>' + S.total + '点</b>';
 if(S.round>= 5){
