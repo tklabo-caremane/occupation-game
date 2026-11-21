@@ -38,6 +38,8 @@ select { border:1.5px solid #cfc8ae; background:#fff;}
 .score { font-size:15px; line-height:1.9;}
 .score .total { font-size:26px; font-weight:bold; color:#0b7a68;}
 .bdline { display:block; opacity:0; animation:bdIn .45s ease forwards;}
+.hwBounce { animation:hwB 0.9s ease-in-out infinite;}
+@keyframes hwB { 0%, 100% { transform:translateY(0);} 50% { transform:translateY(4px);}}
 @keyframes bdIn { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:none;}}
 .share { display:block; text-align:center; margin-top:10px; padding:12px; background:#0b7a68; color:#fff; border-radius:11px; text-decoration:none; font-weight:bold;}
 #vig { display:none; position:fixed; inset:0; background:rgba(30,28,20,.92); z-index:50; align-items:center; justify-content:center; padding:20px;}
@@ -109,6 +111,29 @@ body { background-color:#fdf6e3; background-image:none;}
 <div class="btns" id="pBtns2"></div>
 <div style="text-align:center;"><div class="status" id="pStatus"></div></div>
 
+</div>
+
+
+<div id="scr-howto" class="hidden">
+<div class="card">
+<div style="font-weight:bold; font-size:17px; text-align:center; margin-bottom:10px;">遊び方</div>
+<div style="display:flex; align-items:flex-start; justify-content:center; gap:6px;">
+<div style="text-align:center;"><img id="hwFrom" style="width:74px; height:74px; object-fit:cover; border-radius:12px;" alt=""><div style="font-size:12px; font-weight:bold; margin-top:3px;">農家</div><div style="font-size:10.5px; color:#7a7565;">スタート</div></div>
+<div style="font-size:18px; padding-top:26px; color:#7a7565;">→</div>
+<div style="text-align:center;">
+<div style="font-size:13px; font-weight:bold; color:#e07b39;">選べ！</div>
+<div class="hwBounce" style="font-size:15px; color:#e07b39;">▼</div>
+<div style="background:#e8e6df; border-radius:12px; padding:8px 6px 4px;">
+<svg width="34" height="40" viewBox="0 0 34 40"><circle cx="17" cy="8" r="6" fill="#9a978c"/><path d="M17 14 c-6 0 -9 4 -9 10 v12 h18 v-12 c0 -6 -3 -10 -9 -10z" fill="#9a978c"/></svg>
+<svg width="34" height="40" viewBox="0 0 34 40"><circle cx="17" cy="8" r="6" fill="#b3b0a6"/><path d="M17 14 l-8 22 h16z" fill="#b3b0a6"/><rect x="13" y="14" width="8" height="8" fill="#b3b0a6"/></svg>
+</div>
+<div style="font-size:10.5px; color:#7a7565; margin-top:3px;">つぎの職業</div></div>
+<div style="font-size:18px; padding-top:26px; color:#7a7565;">→</div>
+<div style="text-align:center;"><img id="hwTo" style="width:74px; height:74px; object-fit:cover; border-radius:12px;" alt=""><div style="font-size:12px; font-weight:bold; margin-top:3px;">医者</div><div style="font-size:10.5px; color:#7a7565;">目的地（ゴール）</div></div>
+</div>
+<p style="font-size:13.5px; line-height:1.8; margin:12px 2px 4px;">今いる職業から、つながっている職業へ渡っていくゲームです。<br>グレーの中から、次に行きたい職業を<b>選んで</b>進みます。<br>目的地に着けばゴール。手数が少ないほど高得点です。</p>
+<button class="gobtn" id="btnHowtoOk">わかった、はじめる</button>
+</div>
 </div>
 
 <div id="scr-result" class="hidden">
@@ -359,8 +384,13 @@ window.scrollTo(0,0);
 $('btnStart').addEventListener('click', function(){
 S.cur = S.start; S.hops = 0; S.path = [S.start]; S.rares = []; S.scored = false;
 S.pool = (bfs(S.start, S.target).length - 1) * 10; S.bonus = 0; S.bonusLog = []; S.hubHit = {}; S.rareHit = {}; S.deducted = false;
-showPlay();
+if(S.round === 1){
+$('hwFrom').src = IMG['nouka']; $('hwTo').src = IMG['isha'];
+$('scr-start').classList.add('hidden'); $('scr-play').classList.add('hidden'); $('scr-result').classList.add('hidden'); $('scr-howto').classList.remove('hidden');
+window.scrollTo(0,0);
+} else { showPlay();}
 });
+$('btnHowtoOk').addEventListener('click', function(){ $('scr-howto').classList.add('hidden'); showPlay();});
 $('btnShuffle').addEventListener('click', pickPair);
 $('btnRetry').addEventListener('click', function(){
 if(S.round>= 5){ S.round = 1; S.total = 0; S.setPlan = null;} else { S.round++;}
